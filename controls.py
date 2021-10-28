@@ -11,7 +11,7 @@ from pyHepMC3 import HepMC3 as hepmc
 #_____________________________________________________________________________
 def main():
 
-    iplot = 9
+    iplot = 3
 
     func = {}
     func[0] = plot_en
