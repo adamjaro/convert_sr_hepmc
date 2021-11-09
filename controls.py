@@ -5,13 +5,14 @@ import math
 
 from pandas import DataFrame, HDFStore, read_hdf
 import matplotlib.pyplot as plt
+import numpy as np
 
 from pyHepMC3 import HepMC3 as hepmc
 
 #_____________________________________________________________________________
 def main():
 
-    iplot = 3
+    iplot = 10
 
     func = {}
     func[0] = plot_en
@@ -24,7 +25,7 @@ def main():
     func[7] = plot_flux
     func[8] = plot_power
     func[9] = plot_zphi
-
+    func[10] = plot_radius
     func[101] = create_df
     func[102] = create_df_all
 
@@ -39,9 +40,9 @@ def plot_en():
 
     nbins = 60
 
-    plt.style.use("dark_background")
-    col = "lime"
-    #col = "black"
+    #plt.style.use("dark_background")
+    #col = "lime"
+    col = "black"
 
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -50,7 +51,7 @@ def plot_en():
 
     en_keV = inp["en"]*1e6
 
-    plt.hist(en_keV, bins=nbins, color="blue", density=True, histtype="step", lw=2)
+    plt.hist(en_keV, bins=nbins, color="blue", density=True, histtype="step", lw=2, range=(1,110))
 
     ax.set_xlabel("Energy (keV)")
     ax.set_ylabel("Normalized counts")
@@ -69,21 +70,21 @@ def plot_theta():
 
     nbins = 60
 
-    plt.style.use("dark_background")
-    col = "lime"
-    #col = "black"
+    #plt.style.use("dark_background")
+    #col = "lime"
+    col = "black"
 
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     set_axes_color(ax, col)
     set_grid(plt, col)
 
-    plt.hist(inp["theta"], bins=nbins, color="blue", density=True, histtype="step", lw=2)
+    plt.hist(inp["theta"]*1e3, bins=nbins, color="blue", density=True, histtype="step", lw=2)
 
-    ax.set_xlabel("Theta (rad)")
+    ax.set_xlabel(r"$\theta$ (mrad)")
     ax.set_ylabel("Normalized counts")
 
-    #ax.set_yscale("log")
+    ax.set_yscale("log")
 
     fig.savefig("01fig.pdf", bbox_inches = "tight")
     plt.close()
@@ -97,21 +98,21 @@ def plot_phi():
 
     nbins = 60
 
-    plt.style.use("dark_background")
-    col = "lime"
-    #col = "black"
+    #plt.style.use("dark_background")
+    #col = "lime"
+    col = "black"
 
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     set_axes_color(ax, col)
     set_grid(plt, col)
 
-    plt.hist(inp["phi"], bins=nbins, color="blue", density=True, histtype="step", lw=2)
+    plt.hist(inp["phi"]+np.pi, bins=nbins, color="blue", density=True, histtype="step", lw=2)
 
-    ax.set_xlabel("Phi (rad)")
+    ax.set_xlabel(r"$\phi$ (rad)")
     ax.set_ylabel("Normalized counts")
 
-    #ax.set_yscale("log")
+    ax.set_yscale("log")
 
     fig.savefig("01fig.pdf", bbox_inches = "tight")
     plt.close()
@@ -208,18 +209,18 @@ def plot_z():
 
     nbins = 60
 
-    plt.style.use("dark_background")
-    col = "lime"
-    #col = "black"
+    #plt.style.use("dark_background")
+    #col = "lime"
+    col = "black"
 
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     set_axes_color(ax, col)
     set_grid(plt, col)
 
-    plt.hist(inp["posz"], bins=nbins, color="blue", density=True, histtype="step", lw=2)
+    plt.hist(inp["posz"]*1e-3, bins=nbins, color="blue", density=True, histtype="step", lw=2)
 
-    ax.set_xlabel("z (mm)")
+    ax.set_xlabel("Photon $z$ position (meters)")
     ax.set_ylabel("Normalized counts")
 
     #ax.set_yscale("log")
@@ -311,6 +312,34 @@ def plot_zphi():
     plt.close()
 
 #plot_zphi
+
+#_____________________________________________________________________________
+def plot_radius():
+
+    inp = read_hdf("sr.h5")
+
+    nbins = 60
+
+    #plt.style.use("dark_background")
+    #col = "lime"
+    col = "black"
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    set_axes_color(ax, col)
+    set_grid(plt, col)
+
+    plt.hist(np.sqrt(inp["posx"]**2+inp["posy"]**2), bins=nbins, color="blue", density=True, histtype="step", lw=2, range=(29.375, 29.5))
+
+    ax.set_xlabel("Photon radial position (mm)")
+    ax.set_ylabel("Normalized counts")
+
+    ax.set_yscale("log")
+
+    fig.savefig("01fig.pdf", bbox_inches = "tight")
+    plt.close()
+
+#plot_radius
 
 #_____________________________________________________________________________
 def create_df():
