@@ -31,6 +31,7 @@ int main(int argc, char* argv[]) {
   opt.add_options()("input,i", program_options::value<string>(), "SR input");
   opt.add_options()("output,o", program_options::value<string>(), "HepMC3 output");
   opt.add_options()("nev,n", program_options::value<long>(), "Number of events");
+  opt.add_options()("invert_z", program_options::value<bool>(), "Inversion along z axis");
 
   program_options::variables_map opt_map;
   program_options::store(program_options::parse_command_line(argc, argv, opt), opt_map);
@@ -49,6 +50,12 @@ int main(int argc, char* argv[]) {
   }
   std::shared_ptr<GenRunInfo> run = std::make_shared<GenRunInfo>();
   WriterAscii file(output, run);
+
+  //inversion in z axis
+  int invert_z = 1;
+  if( opt_map.count("invert_z") and opt_map["invert_z"].as<bool>() ) {
+    invert_z = -1;
+  }
 
   //input header
   map<string, int> header = get_header(in);
@@ -92,10 +99,10 @@ int main(int argc, char* argv[]) {
     evt.set_event_number(iev-1);
 
     //photon location, mm
-    evt.shift_position_to( FourVector(val[iposx]*10, val[iposy]*10, val[iposz]*10, 0) );
+    evt.shift_position_to( FourVector(val[iposx]*10, val[iposy]*10, invert_z*val[iposz]*10, 0) );
 
     //photon particle, GeV
-    FourVector vec(val[idirx]*val[ien]*1e-9, val[idiry]*val[ien]*1e-9, val[idirz]*val[ien]*1e-9, val[ien]*1e-9);
+    FourVector vec(val[idirx]*val[ien]*1e-9, val[idiry]*val[ien]*1e-9, invert_z*val[idirz]*val[ien]*1e-9, val[ien]*1e-9);
     GenParticlePtr p0 = std::make_shared<GenParticle>(vec, 22, 1);
     evt.add_particle(p0);
 

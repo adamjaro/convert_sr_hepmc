@@ -12,7 +12,7 @@ from pyHepMC3 import HepMC3 as hepmc
 #_____________________________________________________________________________
 def main():
 
-    iplot = 10
+    iplot = 6
 
     func = {}
     func[0] = plot_en
@@ -36,7 +36,9 @@ def main():
 #_____________________________________________________________________________
 def plot_en():
 
-    inp = read_hdf("sr.h5")
+    infile = "../10_std_highstatistics/hepmc_2484x.h5"
+
+    inp = read_hdf(infile)
 
     nbins = 60
 
@@ -122,7 +124,9 @@ def plot_phi():
 #_____________________________________________________________________________
 def plot_xy():
 
-    inp = read_hdf("sr.h5")
+    infile = "../10_std_highstatistics/hepmc_2484x.h5"
+
+    inp = read_hdf(infile)
 
     nbins = 60
 
@@ -205,13 +209,20 @@ def plot_y():
 #_____________________________________________________________________________
 def plot_z():
 
-    inp = read_hdf("sr.h5")
+    #infile = "../10_std_highstatistics/hepmc_2484x.h5"
+    #infile = "../10_std_highstatistics/hepmc_1kevt.h5"
+    #infile = "../10_std_highstatistics_2/hepmc_1kevt.h5"
+    #infile = "../10_std_highstatistics_2/hepmc_2484x.h5"
+    infile = "../10_standard_tail/hepmc_all.h5"
+    #infile = "../10_optimistic/hepmc_all.h5"
+
+    inp = read_hdf(infile)
 
     nbins = 60
 
-    #plt.style.use("dark_background")
-    #col = "lime"
-    col = "black"
+    plt.style.use("dark_background")
+    col = "lime"
+    #col = "black"
 
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -393,7 +404,19 @@ def create_df():
 def create_df_all():
 
     #input hepmc
-    inp = glob("../hepmc/?????.hepmc")
+    #inp = glob("../10_std_highstatistics/hepmc/?????.hepmc")
+    #outname = "../10_std_highstatistics/hepmc_1kevt.h5"
+
+    #inp = glob("../10_std_highstatistics_2/hepmc/2484?.hepmc")
+    #outname = "../10_std_highstatistics_2/hepmc_2484x.h5"
+
+    #inp = glob("../10_standard_tail/hepmc/?????.hepmc")
+    #outname = "../10_standard_tail/hepmc_all.h5"
+
+    inp = glob("../10_optimistic/hepmc/?????.hepmc")
+    outname = "../10_optimistic/hepmc_all.h5"
+
+    #nmax = 1000
 
     #output dataframe
     col = ["posx", "posy", "posz", "en", "theta", "phi", "flux", "power"]
@@ -402,10 +425,13 @@ def create_df_all():
     #input loop
     for ih in inp:
 
+        print(ih)
+
         read = hepmc.ReaderAscii(ih)
 
         #event loop
         while(True):
+        #for iev in range(nmax):
 
             mc = hepmc.GenEvent(hepmc.Units.GEV, hepmc.Units.MM)
             read.read_event(mc)
@@ -434,7 +460,7 @@ def create_df_all():
 
     print(df)
 
-    out = HDFStore("sr.h5")
+    out = HDFStore(outname)
     out["sr"] = df
     out.close()
 

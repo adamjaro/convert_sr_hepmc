@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 #_____________________________________________________________________________
 def main():
 
-    iplot = 3
+    iplot = 2
 
     func = {}
     func[0] = plot_z
@@ -79,7 +79,10 @@ def plot_xy():
 #_____________________________________________________________________________
 def plot_z_all():
 
-    inp_all = glob("../input/?????.csv")
+    #infiles = "../input/?????.csv"
+    infiles = "../10_standard_tail/?????.csv"
+
+    inp_all = glob(infiles)
     print("All inputs:", len(inp_all))
 
     inp = concat([read_csv(i) for i in inp_all], ignore_index=True)
